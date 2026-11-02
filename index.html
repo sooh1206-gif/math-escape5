@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>정다면체 탐구실</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:"Pretendard","Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;background:#f6f3fc;color:#3a3452;line-height:1.5}
+header{background:#fff;border-bottom:2px solid #e6def5;padding:10px 20px;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+h1{font-size:22px;margin:0;letter-spacing:-0.3px}
+h2{font-size:17px;margin:0 0 10px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{font:inherit;font-weight:700;font-size:15px;border:2px solid #d9cff0;background:#faf7ff;color:#5d5580;padding:8px 16px;border-radius:12px;cursor:pointer}
+.tabs button.on{background:#cdb9f5;border-color:#b79cf0;color:#2f2552}
+.wrap{max-width:1180px;margin:0 auto;padding:14px}
+.card{background:#fff;border:2px solid #e6def5;border-radius:16px;padding:14px}
+.note{background:#fff8e1;border:2px solid #fbe3a1;border-radius:14px;padding:10px 14px;margin-bottom:12px;font-size:15px}
+.solidbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.solidbar button{font:inherit;font-weight:700;font-size:16px;border:2px solid #dcd2f2;background:#fff;color:#4a416b;padding:9px 16px;border-radius:12px;cursor:pointer}
+.solidbar button.on{background:#bfe3d3;border-color:#8fcbb0;color:#1f4a3a}
+.grid1{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(290px,1fr);gap:14px}
+@media(max-width:880px){.grid1,.grid2{grid-template-columns:1fr !important}}
+.stagehead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;gap:8px;flex-wrap:wrap}
+.stagehead b{font-size:18px}
+.hint{font-size:13px;color:#7b7596}
+canvas{width:100%;display:block;border-radius:12px;background:#fcfaff;border:1px solid #eee7fa;touch-action:none;cursor:grab}
+canvas:active{cursor:grabbing}
+#c1{height:480px}#c2{height:430px}#c3{height:300px;cursor:default}
+@media(max-width:600px){#c1{height:360px}#c2{height:340px}}
+.ctrl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.ctrl label{font-size:14px;display:flex;align-items:center;gap:4px;cursor:pointer}
+.ctrl input[type=range]{flex:1;min-width:140px;accent-color:#a98bec}
+button.big{font:inherit;font-weight:800;font-size:17px;border:0;background:#a98bec;color:#fff;padding:10px 22px;border-radius:12px;cursor:pointer;min-width:130px}
+button.big:hover{background:#9777e3}
+button.sm{font:inherit;font-size:14px;font-weight:600;border:2px solid #dcd2f2;background:#fff;color:#5d5580;padding:6px 12px;border-radius:10px;cursor:pointer}
+button.sm:hover{background:#f3edfd}
+.cbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.cbtns button{font:inherit;font-weight:800;font-size:16px;border:3px solid transparent;border-radius:12px;padding:12px 6px;cursor:pointer;color:#3a3452}
+.cbtns button.f{background:#ffeaa7}.cbtns button.v{background:#ffc9d6}.cbtns button.e{background:#bfe2ff}.cbtns button.w{background:#c7f0dc;font-size:14px}
+.cbtns button.act{border-color:#6b5aa8}
+.cbtns button:hover{filter:brightness(0.97)}
+.counter{background:#faf7ff;border:2px dashed #d5c9ef;border-radius:14px;padding:10px;text-align:center;margin-bottom:10px}
+.counter .lab{font-size:14px;color:#6c6590;min-height:20px}
+.counter .num{font-size:52px;font-weight:900;color:#7b5fd0;line-height:1.1}
+.msg{min-height:48px;font-size:15px;padding:8px 10px;border-radius:10px;background:#eef8f3;color:#25533f;margin-top:8px}
+.msg.warn{background:#fff0e0;color:#7a4a12}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+table.q{border-collapse:collapse;width:100%;font-size:15px;table-layout:fixed}
+table.q th,table.q td{border:1.5px solid #8fb2e4;padding:6px;text-align:center;height:44px}
+table.q thead th{background:#dbe8f9;font-weight:800}
+table.q th.rh{background:#f2f7fd;font-weight:800;width:17%}
+table.q td.colSel,table.q th.colSel{background:#fff6cf}
+table.q thead th.colSel{background:#ffe9a0}
+table.q input,table.q select{font:inherit;font-size:16px;width:90%;max-width:110px;text-align:center;border:1.5px solid #cfc6e8;border-radius:8px;padding:5px 2px;background:#fff;color:#3a3452}
+table.q td.ok{background:#d8f3e4}table.q td.bad{background:#ffdbe3}
+table.q td.ok.colSel{background:#d8f3e4}table.q td.bad.colSel{background:#ffdbe3}
+.given{font-weight:700;color:#4a416b}
+.tmsg{font-size:15px;margin-top:8px;min-height:24px;font-weight:700}
+.grid2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:14px;margin-bottom:14px}
+.shapebar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
+.shapebar button{font:inherit;font-weight:800;font-size:15px;border:3px solid transparent;border-radius:12px;padding:8px 14px;cursor:pointer;color:#3a3452}
+.shapebar button.on{border-color:#6b5aa8}
+.stepper{display:flex;align-items:center;gap:6px;font-weight:700}
+.stepper button{width:34px;height:34px;border-radius:10px;border:2px solid #dcd2f2;background:#fff;font-size:20px;font-weight:800;cursor:pointer;color:#5d5580}
+.stepper span.v{display:inline-block;min-width:60px;text-align:center;font-size:17px}
+.verdict{border-radius:12px;padding:10px 12px;font-size:15px;font-weight:600;margin-top:8px}
+.verdict.ok{background:#d8f3e4;color:#1d4f38}.verdict.warn{background:#ffefc9;color:#74510b}.verdict.bad{background:#ffdbe3;color:#7d2540}
+.eq{font-size:18px;font-weight:800;text-align:center;margin:6px 0}
+table.m{border-collapse:collapse;width:100%;table-layout:fixed;font-size:14px}
+table.m th,table.m td{border:1.5px solid #e1d8f3;padding:6px 4px;text-align:center}
+table.m th{background:#f1ebfc}
+table.m td{cursor:pointer;height:64px}
+table.m td.p{background:#d8f3e4}table.m td.z{background:#fff0c4}table.m td.x{background:#ffdbe3}
+table.m td.sel{outline:4px solid #6b5aa8;outline-offset:-4px}
+table.m td small{display:block;font-weight:800;margin-top:2px}
+.concl{background:#eef3ff;border:2px solid #cddafb;border-radius:14px;padding:12px 14px;margin-top:12px;font-size:15px}
+ul.steps{margin:6px 0 0;padding-left:20px;font-size:15px}
+ul.steps li{margin-bottom:4px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>정다면체 탐구실</h1>
+  <div class="tabs">
+    <button id="tabBtn1" class="on">1. 정다면체 관찰하기</button>
+    <button id="tabBtn2">2. 왜 정다면체는 5가지뿐일까?</button>
+  </div>
+</header>
+
+<div class="wrap">
+<!-- ===================== TAB 1 ===================== -->
+<section id="tab1">
+  <div class="note">정다면체를 고르고 <b>[접기]</b> 버튼을 눌러 전개도가 입체도형이 되는 모습을 보세요. 화면을 드래그하면 돌려 볼 수 있어요. 오른쪽의 <b>세어 보기</b> 버튼으로 개수를 세고, 아래 표를 채워 보세요.</div>
+  <div class="solidbar" id="solidBar"></div>
+  <div class="grid1">
+    <div class="card">
+      <div class="stagehead"><b id="solidTitle">정사면체</b><span class="hint">드래그: 돌려 보기</span></div>
+      <canvas id="c1"></canvas>
+      <div class="ctrl">
+        <button class="big" id="foldBtn">전개도 접기</button>
+        <input type="range" id="foldRange" min="0" max="1000" value="0" aria-label="접는 정도">
+      </div>
+      <div class="ctrl">
+        <label><input type="checkbox" id="chkTrans">투명하게 보기</label>
+        <label><input type="checkbox" id="chkAuto">자동으로 돌리기</label>
+        <button class="sm" id="resetView">시점 처음으로</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>세어 보기</h2>
+      <div class="cbtns">
+        <button class="f" id="cbFace">면 세기</button>
+        <button class="v" id="cbVertex">꼭짓점 세기</button>
+        <button class="e" id="cbEdge">모서리 세기</button>
+        <button class="w" id="cbVface">한 꼭짓점에<br>모인 면 세기</button>
+      </div>
+      <div class="counter">
+        <div class="lab" id="cntLabel">버튼을 누를 때마다 하나씩 세어 줘요</div>
+        <div class="num" id="cntNum">0</div>
+      </div>
+      <div class="row">
+        <button class="sm" id="autoBtn">자동으로 세기</button>
+        <button class="sm" id="cntReset">처음부터 다시</button>
+        <button class="sm hide" id="otherV">다른 꼭짓점 보기</button>
+      </div>
+      <div class="msg" id="cntMsg">면은 전개도 상태에서도 셀 수 있어요. 꼭짓점과 모서리는 입체도형으로 접은 뒤에 세어요.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h2>[확인문제 4] 정다면체의 전개도를 접어 각 정다면체를 만들어 보고, 다음 표의 빈칸에 알맞은 것을 써넣어라.</h2>
+    <table class="q" id="qtable"></table>
+    <div class="row" style="margin-top:10px">
+      <button class="big" id="checkBtn" style="min-width:110px;font-size:15px;padding:8px 18px">정답 확인</button>
+      <button class="sm" id="clearBtn">표 지우기</button>
+      <button class="sm" id="teachBtn">정답 채우기 (선생님용)</button>
+    </div>
+    <div class="tmsg" id="tmsg"></div>
+  </div>
+</section>
+
+<!-- ===================== TAB 2 ===================== -->
+<section id="tab2" class="hide">
+  <div class="note">정다면체는 <b>꼭짓점 한 곳에 같은 정다각형 면이 모여서</b> 만들어져요. 어떤 정다각형을 몇 개 모을 수 있는지 직접 확인해 봐요. 처음 보이는 그림은 <b>정육각형 3개</b>를 한 꼭짓점에 모은 모습이에요.</div>
+  <div class="grid2">
+    <div class="card">
+      <div class="shapebar" id="shapeBar"></div>
+      <div class="shapebar">
+        <div class="stepper">한 꼭짓점에 모이는 면
+          <button id="nMinus">-</button><span class="v" id="nVal">3개</span><button id="nPlus">+</button>
+        </div>
+      </div>
+      <canvas id="c2"></canvas>
+      <div class="ctrl">
+        <button class="big" id="foldBtn2">접어 보기</button>
+        <span class="hint" id="hint2">드래그: 돌려 보기</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>각의 크기를 더해 봐요</h2>
+      <canvas id="c3"></canvas>
+      <div class="eq" id="eq2"></div>
+      <div class="verdict ok" id="verdict2"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>모든 경우를 한눈에 보기 (칸을 누르면 위의 그림이 바뀌어요)</h2>
+    <table class="m" id="matrix"></table>
+    <div class="concl">
+      <b>정리</b>
+      <ul class="steps">
+        <li>입체도형의 한 꼭짓점에는 면이 <b>3개 이상</b> 모여야 해요.</li>
+        <li>한 꼭짓점에 모인 각의 크기의 합이 <b>360°보다 작아야</b> 접었을 때 꼭짓점이 뾰족하게 솟아올라요.</li>
+        <li>합이 <b>360°</b>이면 평면이 되어 접을 수 없고, <b>360°보다 크면</b> 면이 서로 겹쳐서 만들 수 없어요.</li>
+        <li><b>정육각형</b>은 한 각이 120°라서 3개만 모아도 360°가 돼요. 그래서 벌집처럼 평면만 채우고 입체도형은 될 수 없어요. 정칠각형처럼 변이 더 많은 정다각형은 한 각이 더 커서 3개만 모아도 360°를 넘어요.</li>
+        <li>그래서 정다면체는 <b>정사면체, 정육면체, 정팔면체, 정십이면체, 정이십면체</b> 5가지뿐이에요.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</div>
+
+<script>
+(function(){
+'use strict';
+const TAU=Math.PI*2, PHI=(1+Math.sqrt(5))/2, IP=1/PHI;
+const FONT='"Pretendard","Noto Sans KR","Malgun Gothic",sans-serif';
+
+/* ---------- vector / quaternion ---------- */
+const V3={
+  add:(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]],
+  sub:(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],
+  mul:(a,s)=>[a[0]*s,a[1]*s,a[2]*s],
+  dot:(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],
+  cross:(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],
+  len:a=>Math.hypot(a[0],a[1],a[2]),
+  norm:a=>{const l=Math.hypot(a[0],a[1],a[2])||1;return [a[0]/l,a[1]/l,a[2]/l];}
+};
+const Q={
+  ident:()=>[0,0,0,1],
+  axis:(ax,ang)=>{const s=Math.sin(ang/2);const n=V3.norm(ax);return [n[0]*s,n[1]*s,n[2]*s,Math.cos(ang/2)];},
+  mul:(a,b)=>[
+    a[3]*b[0]+a[0]*b[3]+a[1]*b[2]-a[2]*b[1],
+    a[3]*b[1]-a[0]*b[2]+a[1]*b[3]+a[2]*b[0],
+    a[3]*b[2]+a[0]*b[1]-a[1]*b[0]+a[2]*b[3],
+    a[3]*b[3]-a[0]*b[0]-a[1]*b[1]-a[2]*b[2]],
+  norm:a=>{const l=Math.hypot(a[0],a[1],a[2],a[3])||1;return [a[0]/l,a[1]/l,a[2]/l,a[3]/l];},
+  rot:(q,v)=>{
+    const u=[q[0],q[1],q[2]],w=q[3];
+    const t=V3.mul(V3.cross(u,v),2);
+    return V3.add(V3.add(v,V3.mul(t,w)),V3.cross(u,t));
+  },
+  slerp:(a,b,t)=>{
+    let d=a[0]*b[0]+a[1]*b[1]+a[2]*b[2]+a[3]*b[3];
+    if(d<0){b=b.map(x=>-x);d=-d;}
+    if(d>0.9995){return Q.norm(a.map((x,i)=>x+(b[i]-x)*t));}
+    const th=Math.acos(d),s=Math.sin(th);
+    const wa=Math.sin((1-t)*th)/s,wb=Math.sin(t*th)/s;
+    return a.map((x,i)=>x*wa+b[i]*wb);
+  },
+  arc:(u,v)=>{
+    const d=V3.dot(u,v);
+    if(d<-0.999999){
+      let ax=Math.abs(u[0])<0.9?[1,0,0]:[0,1,0];
+      ax=V3.norm(V3.cross(u,ax));
+      return [ax[0],ax[1],ax[2],0];
+    }
+    const c=V3.cross(u,v);
+    return Q.norm([c[0],c[1],c[2],1+d]);
+  }
+};
+
+/* ---------- the five solids ---------- */
+function pm(a,b,c){
+  const out=[];
+  for(const sa of (a===0?[1]:[1,-1]))for(const sb of (b===0?[1]:[1,-1]))for(const sc of (c===0?[1]:[1,-1]))out.push([a*sa,b*sb,c*sc]);
+  return out;
+}
+const DEFS=[
+  {key:'tetra',name:'정사면체',verts:[[1,1,1],[1,-1,-1],[-1,1,-1],[-1,-1,1]]},
+  {key:'cube',name:'정육면체',verts:pm(1,1,1)},
+  {key:'octa',name:'정팔면체',verts:[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]]},
+  {key:'dodeca',name:'정십이면체',verts:[].concat(pm(1,1,1),pm(0,IP,PHI),pm(IP,PHI,0),pm(PHI,0,IP))},
+  {key:'icosa',name:'정이십면체',verts:[].concat(pm(0,1,PHI),pm(1,PHI,0),pm(PHI,0,1))}
+];
+
+function makeFace(V,idx,n){
+  let c=[0,0,0];idx.forEach(i=>{c=V3.add(c,V[i]);});c=V3.mul(c,1/idx.length);
+  const u=V3.norm(V3.sub(V[idx[0]],c));
+  const w=V3.cross(n,u);
+  const arr=idx.map(i=>{const r=V3.sub(V[i],c);return {i:i,a:Math.atan2(V3.dot(r,w),V3.dot(r,u)),x:V3.dot(r,u),y:V3.dot(r,w)};});
+  arr.sort((p,q)=>p.a-q.a);
+  return {v:arr.map(o=>o.i),n:n,c:c,local:arr.map(o=>[o.x,o.y])};
+}
+
+function buildSolid(def){
+  let V=def.verts.map(v=>v.slice());
+  let minD=1e9;
+  for(let i=0;i<V.length;i++)for(let j=i+1;j<V.length;j++){const d=V3.len(V3.sub(V[i],V[j]));if(d<minD)minD=d;}
+  V=V.map(v=>V3.mul(v,1/minD));
+  const eps=1e-6,N=V.length,faces=[],seen={};
+  for(let i=0;i<N;i++)for(let j=i+1;j<N;j++)for(let k=j+1;k<N;k++){
+    let n=V3.cross(V3.sub(V[j],V[i]),V3.sub(V[k],V[i]));
+    const l=V3.len(n);if(l<1e-9)continue;
+    n=V3.mul(n,1/l);
+    if(V3.dot(n,V[i])<0)n=V3.mul(n,-1);
+    const d=V3.dot(n,V[i]);
+    if(d<1e-6)continue;
+    let ok=true;const on=[];
+    for(let m=0;m<N;m++){const val=V3.dot(n,V[m])-d;if(val>eps){ok=false;break;}if(val>-eps)on.push(m);}
+    if(!ok)continue;
+    const key=on.join(',');
+    if(seen[key])continue;seen[key]=true;
+    faces.push(makeFace(V,on,n));
+  }
+  const edges=[],emap={};
+  faces.forEach((f,fi)=>{
+    const m=f.v.length;
+    for(let k=0;k<m;k++){
+      const a=f.v[k],b=f.v[(k+1)%m];
+      const lo=Math.min(a,b),hi=Math.max(a,b),key=lo+'-'+hi;
+      let e=emap[key];
+      if(!e){e={a:lo,b:hi,faces:[]};emap[key]=e;edges.push(e);}
+      e.faces.push(fi);
+    }
+  });
+  const vf=V.map(()=>[]);
+  faces.forEach((f,fi)=>f.v.forEach(v=>vf[v].push(fi)));
+  V.forEach((p,vi)=>{
+    const ax=V3.norm(p);
+    const t=Math.abs(ax[0])<0.9?[1,0,0]:[0,1,0];
+    const u=V3.norm(V3.cross(ax,t)),w=V3.cross(ax,u);
+    vf[vi].sort((fa,fb)=>{
+      const ca=V3.sub(faces[fa].c,p),cb=V3.sub(faces[fb].c,p);
+      return Math.atan2(V3.dot(ca,w),V3.dot(ca,u))-Math.atan2(V3.dot(cb,w),V3.dot(cb,u));
+    });
+  });
+  const vadj=V.map(()=>[]);
+  edges.forEach(e=>{vadj[e.a].push(e.b);vadj[e.b].push(e.a);});
+  const vorder=[0],vseen={0:true};
+  for(let i=0;i<vorder.length;i++){
+    vadj[vorder[i]].slice().sort((a,b)=>a-b).forEach(w=>{if(!vseen[w]){vseen[w]=true;vorder.push(w);}});
+  }
+  const vrank=[];vorder.forEach((v,i)=>{vrank[v]=i;});
+  const eorder=edges.map((e,i)=>i).sort((x,y)=>{
+    const ex=edges[x],ey=edges[y];
+    const ax=Math.min(vrank[ex.a],vrank[ex.b]),ay=Math.min(vrank[ey.a],vrank[ey.b]);
+    if(ax!==ay)return ax-ay;
+    return Math.max(vrank[ex.a],vrank[ex.b])-Math.max(vrank[ey.a],vrank[ey.b]);
+  });
+  const vref=V.map((p,vi)=>{const fi=vf[vi][0];return [fi,faces[fi].v.indexOf(vi)];});
+  return {V:V,faces:faces,edges:edges,vf:vf,vorder:vorder,eorder:eorder,vref:vref};
+}
+
+/* ---------- net (unfolding) ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+function randomTree(S,rnd){
+  const F=S.faces.length,par=[];for(let i=0;i<F;i++)par.push(i);
+  const find=x=>{while(par[x]!==x){par[x]=par[par[x]];x=par[x];}return x;};
+  const es=S.edges.slice();
+  for(let i=es.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));const t=es[i];es[i]=es[j];es[j]=t;}
+  const tree=[];
+  for(const e of es){const a=find(e.faces[0]),b=find(e.faces[1]);if(a!==b){par[a]=b;tree.push(e);}}
+  return tree;
+}
+
+function layoutNet(S,tree,root){
+  const F=S.faces.length;
+  const adj=[];for(let i=0;i<F;i++)adj.push([]);
+  tree.forEach(e=>{adj[e.faces[0]].push([e.faces[1],e]);adj[e.faces[1]].push([e.faces[0],e]);});
+  const flat=new Array(F),parent=new Array(F).fill(-2),hv=new Array(F),depth=new Array(F).fill(0),bfs=[root];
+  flat[root]=S.faces[root].local.map(p=>p.slice());parent[root]=-1;
+  for(let qi=0;qi<bfs.length;qi++){
+    const p=bfs[qi];
+    for(const pair of adj[p]){
+      const c=pair[0],e=pair[1];
+      if(parent[c]!==-2)continue;
+      const pf=S.faces[p],cf=S.faces[c];
+      const pa=flat[p][pf.v.indexOf(e.a)],pb=flat[p][pf.v.indexOf(e.b)];
+      const la=cf.local[cf.v.indexOf(e.a)],lb=cf.local[cf.v.indexOf(e.b)];
+      const th=Math.atan2(pb[1]-pa[1],pb[0]-pa[0])-Math.atan2(lb[1]-la[1],lb[0]-la[0]);
+      const cs=Math.cos(th),sn=Math.sin(th);
+      flat[c]=cf.local.map(q=>{const x=q[0]-la[0],y=q[1]-la[1];return [pa[0]+x*cs-y*sn,pa[1]+x*sn+y*cs];});
+      parent[c]=p;hv[c]=[e.a,e.b];depth[c]=depth[p]+1;bfs.push(c);
+    }
+  }
+  return {flat:flat,parent:parent,hv:hv,depth:depth,root:root,bfs:bfs};
+}
+
+function noOverlap(S,L){
+  const F=L.flat.length,cen=[];
+  for(let f=0;f<F;f++){let x=0,y=0;L.flat[f].forEach(p=>{x+=p[0];y+=p[1];});cen.push([x/L.flat[f].length,y/L.flat[f].length]);}
+  for(let a=0;a<F;a++)for(let b=a+1;b<F;b++){
+    const k=Math.max(L.flat[a].length,L.flat[b].length);
+    const rho=1/(2*Math.tan(Math.PI/k));
+    if(Math.hypot(cen[a][0]-cen[b][0],cen[a][1]-cen[b][1])<2*rho*0.97)return false;
+  }
+  return true;
+}
+
+function rotFlat(flat,ang){const c=Math.cos(ang),s=Math.sin(ang);return flat.map(poly=>poly.map(p=>[p[0]*c-p[1]*s,p[0]*s+p[1]*c]));}
+function bbox(flat){
+  let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+  flat.forEach(poly=>poly.forEach(p=>{if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<y0)y0=p[1];if(p[1]>y1)y1=p[1];}));
+  return {x0:x0,x1:x1,y0:y0,y1:y1,w:x1-x0,h:y1-y0};
+}
+function bestAngle(flat){
+  const cand={},angs=[];
+  flat.forEach(poly=>{
+    for(let i=0;i<poly.length;i++){
+      const p=poly[i],q=poly[(i+1)%poly.length];
+      let a=Math.atan2(q[1]-p[1],q[0]-p[0]);
+      a=((a%(Math.PI/2))+Math.PI/2)%(Math.PI/2);
+      const key=Math.round(a*1e4);
+      if(!cand[key]){cand[key]=true;angs.push(a);}
+    }
+  });
+  let best=null;
+  for(const a of angs){
+    const bb=bbox(rotFlat(flat,-a));
+    const sc=Math.max(bb.w,bb.h)+0.02*bb.w*bb.h;
+    if(!best||sc<best.sc-1e-9)best={sc:sc,ang:-a};
+  }
+  return best;
+}
+
+function finalizeNet(S,L,ang){
+  let flat=rotFlat(L.flat,ang);
+  let bb=bbox(flat);
+  if(bb.h>bb.w+1e-9){flat=rotFlat(flat,Math.PI/2);bb=bbox(flat);}
+  const cx=(bb.x0+bb.x1)/2,cy=(bb.y0+bb.y1)/2;
+  flat=flat.map(poly=>poly.map(p=>[p[0]-cx,p[1]-cy]));
+  const F=flat.length,hinge=new Array(F).fill(null);
+  for(let f=0;f<F;f++){
+    const p=L.parent[f];if(p<0)continue;
+    const a=L.hv[f][0],b=L.hv[f][1];
+    const pa=flat[f][S.faces[f].v.indexOf(a)],pb=flat[f][S.faces[f].v.indexOf(b)];
+    let d=V3.norm([pb[0]-pa[0],pb[1]-pa[1],0]);
+    let ccx=0,ccy=0;flat[f].forEach(q=>{ccx+=q[0];ccy+=q[1];});ccx/=flat[f].length;ccy/=flat[f].length;
+    const cr=d[0]*(ccy-pa[1])-d[1]*(ccx-pa[0]);
+    if(cr>0)d=V3.mul(d,-1);
+    const ang2=Math.acos(Math.max(-1,Math.min(1,V3.dot(S.faces[f].n,S.faces[p].n))));
+    hinge[f]={A:[pa[0],pa[1],0],d:d,ang:ang2};
+  }
+  const maxD=Math.max(1,Math.max.apply(null,L.depth));
+  return {flat:flat,parent:L.parent,hinge:hinge,depth:L.depth,rank:L.depth.map(d=>d/maxD),bfs:L.bfs,root:L.root};
+}
+
+function bestNet(S){
+  const F=S.faces.length,rnd=mulberry32(2026+F);
+  const trials=F<=6?80:(F<=12?250:400);
+  let best=null;
+  for(let t=0;t<trials;t++){
+    const tree=randomTree(S,rnd);
+    const root=Math.floor(rnd()*F);
+    const L=layoutNet(S,tree,root);
+    if(!noOverlap(S,L))continue;
+    const ba=bestAngle(L.flat);
+    if(!best||ba.sc<best.sc-1e-9)best={sc:ba.sc,ang:ba.ang,L:L};
+  }
+  if(!best){
+    const L=layoutNet(S,randomTree(S,rnd),0);
+    best={ang:0,L:L};
+  }
+  return finalizeNet(S,best.L,best.ang);
+}
+
+/* ---------- folding ---------- */
+function rodr(p,A,d,ang){
+  const c=Math.cos(ang),s=Math.sin(ang);
+  const v=V3.sub(p,A),k=V3.cross(d,v),dd=V3.dot(d,v);
+  return [A[0]+v[0]*c+k[0]*s+d[0]*dd*(1-c),A[1]+v[1]*c+k[1]*s+d[1]*dd*(1-c),A[2]+v[2]*c+k[2]*s+d[2]*dd*(1-c)];
+}
+function tauOf(net,T){
+  const s=0.55;
+  return net.rank.map(r=>{let x=T*(1+s)-s*r;x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);});
+}
+function foldPoint(net,f,q2,tau){
+  let p=[q2[0],q2[1],0],g=f;
+  while(net.parent[g]>=0){const h=net.hinge[g];p=rodr(p,h.A,h.d,h.ang*tau[g]);g=net.parent[g];}
+  return p;
+}
+function worldAt(sol,T){
+  const net=sol.net,tau=tauOf(net,T);
+  const P=sol.S.faces.map((f,fi)=>net.flat[fi].map(q=>foldPoint(net,fi,q,tau)));
+  let pv=[0,0,0],c=0;
+  P.forEach(a=>a.forEach(p=>{pv=V3.add(pv,p);c++;}));
+  return {P:P,pv:V3.mul(pv,1/c),tau:tau};
+}
+function ensureNet(sol){
+  if(sol.net)return sol;
+  sol.net=bestNet(sol.S);
+  let R=0;
+  [0,0.25,0.5,0.75,1].forEach(T=>{const w=worldAt(sol,T);w.P.forEach(a=>a.forEach(p=>{R=Math.max(R,V3.len(V3.sub(p,w.pv)));}));});
+  sol.R=R*1.03;
+  sol.forder=sol.net.bfs.slice();
+  sol.frank=[];sol.forder.forEach((f,i)=>{sol.frank[f]=i;});
+  return sol;
+}
+const SOL=DEFS.map(d=>({def:d,S:buildSolid(d),net:null}));
+
+//==UI==
+/* ================= UI helpers ================= */
+const $=id=>document.getElementById(id);
+function ensureSize(ui){
+  const r=ui.canvas.getBoundingClientRect();
+  const w=Math.round(r.width),h=Math.round(r.height);
+  if(w<2||h<2)return false;
+  const dpr=window.devicePixelRatio||1;
+  if(w!==ui.W||h!==ui.H||dpr!==ui.dpr){ui.W=w;ui.H=h;ui.dpr=dpr;ui.canvas.width=Math.round(w*dpr);ui.canvas.height=Math.round(h*dpr);}
+  ui.ctx.setTransform(ui.dpr,0,0,ui.dpr,0,0);
+  return true;
+}
+function makeView(){return {q:Q.ident(),anim:null,auto:false};}
+function viewTo(view,qT,dur){view.anim={from:view.q.slice(),to:qT,t0:performance.now(),dur:dur||800};}
+function stepView(view,now){
+  if(view.anim){
+    const a=view.anim,u=Math.min(1,(now-a.t0)/a.dur),e=u*u*(3-2*u);
+    view.q=Q.slerp(a.from,a.to,e);
+    if(u>=1)view.anim=null;
+  }else if(view.auto){
+    view.q=Q.norm(Q.mul(Q.axis([0,1,0],0.009),view.q));
+  }
+}
+function lookAt(view,dir){
+  const cur=Q.rot(view.q,V3.norm(dir));
+  const qa=Q.arc(cur,[0,0,1]);
+  viewTo(view,Q.norm(Q.mul(qa,view.q)),700);
+}
+function attachDrag(canvas,view){
+  let down=false,lx=0,ly=0;
+  canvas.addEventListener('pointerdown',e=>{down=true;lx=e.clientX;ly=e.clientY;view.anim=null;try{canvas.setPointerCapture(e.pointerId);}catch(_){}});
+  canvas.addEventListener('pointermove',e=>{
+    if(!down)return;
+    const dx=e.clientX-lx,dy=e.clientY-ly;lx=e.clientX;ly=e.clientY;
+    let q=Q.mul(Q.axis([0,1,0],dx*0.011),view.q);
+    q=Q.mul(Q.axis([1,0,0],dy*0.011),q);
+    view.q=Q.norm(q);
+  });
+  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>canvas.addEventListener(ev,()=>{down=false;}));
+}
+function tag(ctx,txt,x,y,color,alpha,r){
+  ctx.save();ctx.globalAlpha=alpha==null?1:alpha;
+  ctx.beginPath();ctx.arc(x,y,r||13,0,TAU);ctx.fillStyle='#fff';ctx.fill();
+  ctx.lineWidth=2.6;ctx.strokeStyle=color;ctx.stroke();
+  ctx.fillStyle='#3a3452';ctx.font='800 14px '+FONT;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(String(txt),x,y+1);ctx.restore();
+}
+function polyPath(ctx,pts,dx){
+  ctx.beginPath();
+  pts.forEach((p,i)=>{if(i)ctx.lineTo(p.x+(dx||0),p.y);else ctx.moveTo(p.x+(dx||0),p.y);});
+  ctx.closePath();
+}
+
+/* ================= TAB 1 ================= */
+const ui1={canvas:$('c1'),ctx:$('c1').getContext('2d'),W:0,H:0,dpr:0};
+const view1=makeView();attachDrag(ui1.canvas,view1);
+const QF1=Q.norm(Q.mul(Q.axis([0,1,0],0.5),Q.axis([1,0,0],-0.95)));
+const st={sol:0,T:0,anim:null,count:{type:null,n:0},vsel:0,trans:false,pending:null,autoTimer:null,lastMsg:''};
+const NAMES={face:'면',vertex:'꼭짓점',edge:'모서리',vface:'한 꼭짓점에 모인 면'};
+const hue=fi=>(fi*137.508+20)%360;
+const YEL='hsl(48,100%,78%)';
+
+function curSol(){return ensureNet(SOL[st.sol]);}
+function totalOf(type){
+  const S=SOL[st.sol].S;
+  if(type==='face')return S.faces.length;
+  if(type==='vertex')return S.V.length;
+  if(type==='edge')return S.edges.length;
+  return S.vf[st.vsel].length;
+}
+function setMsg(t,warn){const el=$('cntMsg');el.textContent=t;el.className='msg'+(warn?' warn':'');}
+
+function startFold(target){
+  const now=performance.now();
+  const dur=(target?4200:2800)*Math.max(0.15,Math.abs(target-st.T));
+  st.anim={from:st.T,to:target,t0:now,dur:dur};
+  viewTo(view1,target?QF1:Q.ident(),dur*0.9);
+}
+function selectSolid(i){
+  stopAuto();
+  st.sol=i;st.T=0;st.anim=null;st.pending=null;st.count={type:null,n:0};st.vsel=0;
+  view1.q=Q.ident();view1.anim=null;
+  ensureNet(SOL[i]);
+  [].forEach.call($('solidBar').children,(b,k)=>b.classList.toggle('on',k===i));
+  $('solidTitle').textContent=DEFS[i].name;
+  markColumn();updateCountUI();
+  setMsg('면은 전개도 상태에서도 셀 수 있어요. 꼭짓점과 모서리는 입체도형으로 접은 뒤에 세어요.');
+}
+function resetCount(){stopAuto();st.count={type:null,n:0};st.pending=null;updateCountUI();}
+
+function pressCount(type){
+  if(type!=='face'&&st.T<0.999){
+    st.count={type:null,n:0};st.pending=type;
+    setMsg('먼저 전개도를 접어서 입체도형을 완성할게요. 접고 나면 바로 세기 시작해요!',true);
+    startFold(1);updateCountUI();return;
+  }
+  doCount(type);
+}
+function doCount(type){
+  const total=totalOf(type);
+  if(st.count.type!==type||st.count.n>=total){
+    st.count={type:type,n:0};
+  }
+  st.count.n++;
+  focusCurrent();
+  updateCountUI();
+}
+function focusCurrent(){
+  const c=st.count;if(!c.type)return;
+  const sol=curSol(),S=sol.S;
+  const w=worldAt(sol,st.T),P=w.P,pv=w.pv;
+  const vp=v=>P[S.vref[v][0]][S.vref[v][1]];
+  let target=null,force=false;
+  if(c.type==='vertex')target=vp(S.vorder[c.n-1]);
+  else if(c.type==='edge'){const e=S.edges[S.eorder[c.n-1]];target=V3.mul(V3.add(vp(e.a),vp(e.b)),0.5);}
+  else if(c.type==='vface'){target=vp(st.vsel);force=(c.n===1);}
+  else if(c.type==='face'&&st.T>0.999){
+    const fi=sol.forder[c.n-1];let m=[0,0,0];P[fi].forEach(p=>{m=V3.add(m,p);});target=V3.mul(m,1/P[fi].length);
+  }
+  if(!target)return;
+  const dir=V3.sub(target,pv);
+  if(V3.len(dir)<1e-6)return;
+  const vz=Q.rot(view1.q,V3.norm(dir))[2];
+  if(force||vz<0.15)lookAt(view1,dir);
+}
+function updateCountUI(){
+  const c=st.count;
+  ['Face','Vertex','Edge','Vface'].forEach(n=>{
+    const t=n.toLowerCase();
+    $('cb'+n).classList.toggle('act',c.type===t);
+  });
+  $('otherV').classList.toggle('hide',c.type!=='vface');
+  if(!c.type){
+    $('cntLabel').textContent='버튼을 누를 때마다 하나씩 세어 줘요';
+    $('cntNum').textContent='0';return;
+  }
+  const total=totalOf(c.type);
+  $('cntNum').textContent=String(c.n);
+  if(c.n>=total){
+    $('cntLabel').textContent=NAMES[c.type]+' 다 셌어요!';
+    if(c.type==='vface')setMsg('이 꼭짓점에 모인 면은 모두 '+total+'개예요. 다른 꼭짓점도 같은지 확인해 보고, 표에 써 넣어요.');
+    else setMsg(NAMES[c.type]+'의 개수는 모두 '+total+'개예요. 표에 써 넣어 보세요!');
+  }else{
+    $('cntLabel').textContent=NAMES[c.type]+' 센 개수';
+    setMsg(c.type==='vface'?'빨간 점 꼭짓점에 모인 면을 하나씩 세고 있어요.':'번호가 붙은 것을 따라 하나씩 세고 있어요. 안 보이면 화면이 저절로 돌아가요.');
+  }
+}
+function stopAuto(){if(st.autoTimer){clearInterval(st.autoTimer);st.autoTimer=null;}$('autoBtn').textContent='자동으로 세기';}
+function autoCount(){
+  if(st.autoTimer){stopAuto();return;}
+  const type=st.count.type||'face';
+  pressCount(type);
+  $('autoBtn').textContent='멈추기';
+  st.autoTimer=setInterval(()=>{
+    if(st.pending)return;
+    const c=st.count;
+    if(!c.type||c.n>=totalOf(c.type)){stopAuto();return;}
+    doCount(c.type);
+  },800);
+}
+
+/* ---- drawing ---- */
+function draw1(){
+  if(!ensureSize(ui1))return;
+  const ctx=ui1.ctx,W=ui1.W,H=ui1.H;
+  ctx.clearRect(0,0,W,H);
+  const sol=curSol(),S=sol.S;
+  const w=worldAt(sol,st.T),P=w.P,pv=w.pv;
+  const q=view1.q,D=6*sol.R,sc=0.40*Math.min(W,H)/sol.R,cx=W/2,cy=H/2+4;
+  const pj=p=>{const v=Q.rot(q,V3.sub(p,pv));const f=D/(D-v[2]);return {x:cx+sc*v[0]*f,y:cy-sc*v[1]*f,z:v[2],v:v};};
+  const cnt=st.count,ct=cnt.type;
+  const trans=st.trans||ct==='vertex'||ct==='edge';
+  const vfs=S.vf[st.vsel];
+  const L=V3.norm([0.35,0.5,0.8]);
+  const polys=P.map((arr,fi)=>{
+    const pts=arr.map(pj);
+    const n=V3.norm(V3.cross(V3.sub(pts[1].v,pts[0].v),V3.sub(pts[2].v,pts[0].v)));
+    let z=0,mx=0,my=0;pts.forEach(p=>{z+=p.z;mx+=p.x;my+=p.y;});
+    const m=pts.length;
+    return {fi:fi,pts:pts,n:n,front:n[2]>0,z:z/m,cx:mx/m,cy:my/m};
+  });
+  const ordered=polys.slice().sort((a,b)=>a.z-b.z);
+  ctx.lineJoin='round';
+  for(const pl of ordered){
+    const fi=pl.fi,lam=Math.abs(V3.dot(pl.n,L)),h=hue(fi);
+    let fill=pl.front?'hsl('+h+',68%,'+(76+12*lam)+'%)':'hsl('+h+',28%,'+(91-4*lam)+'%)';
+    let last=false;
+    if(ct==='face'){
+      const r=sol.frank[fi];
+      if(r<cnt.n){fill=pl.front?YEL:'hsl(48,100%,88%)';last=(r===cnt.n-1);}
+      else fill=pl.front?'hsl(250,30%,95%)':'hsl(250,20%,97%)';
+    }else if(ct==='vface'){
+      const r=vfs.indexOf(fi);
+      if(r>=0){if(r<cnt.n){fill=YEL;last=(r===cnt.n-1);}}
+      else fill=pl.front?'hsl(250,30%,95%)':'hsl(250,20%,97%)';
+    }
+    polyPath(ctx,pl.pts);
+    ctx.globalAlpha=trans?0.42:1;ctx.fillStyle=fill;ctx.fill();ctx.globalAlpha=1;
+    ctx.lineWidth=1.8;ctx.strokeStyle='rgba(80,70,120,0.78)';ctx.stroke();
+    if(last){ctx.lineWidth=4;ctx.strokeStyle='#f08a3c';ctx.stroke();}
+  }
+  const vp=v=>pj(P[S.vref[v][0]][S.vref[v][1]]);
+  const hid=p=>p.z<-0.08*sol.R;
+  if(ct==='face'||ct==='vface'){
+    polys.forEach(pl=>{
+      let r=-1;
+      if(ct==='face')r=sol.frank[pl.fi];else r=vfs.indexOf(pl.fi);
+      if(r>=0&&r<cnt.n&&(pl.front||trans)){tag(ctx,r+1,pl.cx,pl.cy,r===cnt.n-1?'#f08a3c':'#c9a227',pl.front?1:0.5);}
+    });
+  }
+  if(ct==='vertex'){
+    for(let i=0;i<cnt.n;i++){
+      const p=vp(S.vorder[i]),a=hid(p)?0.55:1;
+      ctx.save();ctx.globalAlpha=a;
+      ctx.beginPath();ctx.arc(p.x,p.y,i===cnt.n-1?10:7,0,TAU);ctx.fillStyle='#ff7f9f';ctx.fill();
+      ctx.lineWidth=2.5;ctx.strokeStyle='#fff';ctx.stroke();ctx.restore();
+      tag(ctx,i+1,p.x+15,p.y-15,i===cnt.n-1?'#f08a3c':'#e56c8c',a,12);
+    }
+  }
+  if(ct==='edge'){
+    ctx.lineCap='round';
+    for(let i=0;i<cnt.n;i++){
+      const e=S.edges[S.eorder[i]],pa=vp(e.a),pb=vp(e.b),last=(i===cnt.n-1);
+      const a=(hid(pa)&&hid(pb))?0.55:1;
+      ctx.save();ctx.globalAlpha=a;
+      ctx.beginPath();ctx.moveTo(pa.x,pa.y);ctx.lineTo(pb.x,pb.y);
+      ctx.lineWidth=last?8:5;ctx.strokeStyle=last?'#f5a05a':'#5db0f0';ctx.stroke();ctx.restore();
+      tag(ctx,i+1,(pa.x+pb.x)/2,(pa.y+pb.y)/2,last?'#f08a3c':'#3e93d9',a,12);
+    }
+    ctx.lineCap='butt';
+  }
+  if(ct==='vface'){
+    const p=vp(st.vsel);
+    ctx.beginPath();ctx.arc(p.x,p.y,11,0,TAU);ctx.fillStyle='#ff5c85';ctx.fill();
+    ctx.lineWidth=3;ctx.strokeStyle='#fff';ctx.stroke();
+  }
+}
+
+function step1(now){
+  stepView(view1,now);
+  if(st.anim){
+    const a=st.anim,u=Math.min(1,(now-a.t0)/a.dur);
+    st.T=a.from+(a.to-a.from)*u;
+    if(u>=1){
+      st.T=a.to;st.anim=null;
+      if(st.pending){const p=st.pending;st.pending=null;doCount(p);}
+    }
+  }
+  const lab=st.anim?(st.anim.to===1?'접는 중... (누르면 되돌려요)':'펴는 중...'):(st.T>=0.999?'다시 펼치기':'전개도 접기');
+  const fb=$('foldBtn');if(fb.textContent!==lab)fb.textContent=lab;
+  if(!sliderDrag)$('foldRange').value=String(Math.round(st.T*1000));
+  const c=st.count;
+  if(c.type&&c.type!=='face'&&st.T<0.999&&!st.pending)resetCount();
+}
+
+/* ---- tab1 controls ---- */
+let sliderDrag=false;
+(function(){
+  const bar=$('solidBar');
+  DEFS.forEach((d,i)=>{const b=document.createElement('button');b.textContent=d.name;b.addEventListener('click',()=>selectSolid(i));bar.appendChild(b);});
+  $('foldBtn').addEventListener('click',()=>{
+    let target;
+    if(st.anim)target=st.anim.to===1?0:1;else target=st.T>0.5?0:1;
+    startFold(target);
+  });
+  const rg=$('foldRange');
+  rg.addEventListener('pointerdown',()=>{sliderDrag=true;});
+  window.addEventListener('pointerup',()=>{sliderDrag=false;});
+  rg.addEventListener('input',()=>{
+    sliderDrag=true;st.anim=null;st.pending=null;
+    st.T=rg.value/1000;
+    view1.anim=null;view1.q=Q.slerp(Q.ident(),QF1,st.T);
+  });
+  $('chkTrans').addEventListener('change',e=>{st.trans=e.target.checked;});
+  $('chkAuto').addEventListener('change',e=>{view1.auto=e.target.checked;});
+  $('resetView').addEventListener('click',()=>{viewTo(view1,st.T>0.5?QF1:Q.ident(),600);});
+  $('cbFace').addEventListener('click',()=>pressCount('face'));
+  $('cbVertex').addEventListener('click',()=>pressCount('vertex'));
+  $('cbEdge').addEventListener('click',()=>pressCount('edge'));
+  $('cbVface').addEventListener('click',()=>pressCount('vface'));
+  $('autoBtn').addEventListener('click',autoCount);
+  $('cntReset').addEventListener('click',()=>{resetCount();setMsg('처음부터 다시 세어 볼까요? 세고 싶은 버튼을 눌러요.');});
+  $('otherV').addEventListener('click',()=>{
+    const S=SOL[st.sol].S;
+    st.vsel=(st.vsel+1)%S.V.length;
+    st.count={type:'vface',n:1};focusCurrent();updateCountUI();
+  });
+})();
+
+/* ---- table ---- */
+const SHAPE_NAME={3:'정삼각형',4:'정사각형',5:'정오각형'};
+const ANS=SOL.map(s=>({shape:SHAPE_NAME[s.S.faces[0].v.length],vf:s.S.vf[0].length,F:s.S.faces.length,V:s.S.V.length,E:s.S.edges.length}));
+const ROWS=[
+  {k:'shape',label:'면의 모양'},
+  {k:'vf',label:'한 쪽짓점에 모인<br>면의 개수'.replace('쪽짓점','꼭짓점')},
+  {k:'F',label:'면의 개수'},
+  {k:'V',label:'꼭짓점의 개수'},
+  {k:'E',label:'모서리의 개수'}
+];
+const cellEls=[];
+function saveTable(){
+  try{
+    const o=cellEls.map(r=>r.map(el=>el?el.value:''));
+    localStorage.setItem('polyTable',JSON.stringify(o));
+  }catch(e){}
+}
+function buildTable(){
+  const t=$('qtable');
+  let h='<thead><tr><th class="rh">정다면체</th>';
+  DEFS.forEach((d,c)=>{h+='<th data-c="'+c+'">'+d.name+'</th>';});
+  h+='</tr></thead><tbody>';
+  t.innerHTML=h;
+  const tb=document.createElement('tbody');
+  ROWS.forEach((row,r)=>{
+    const tr=document.createElement('tr');
+    const th=document.createElement('th');th.className='rh';th.innerHTML=row.label;tr.appendChild(th);
+    cellEls[r]=[];
+    DEFS.forEach((d,c)=>{
+      const td=document.createElement('td');td.dataset.c=c;
+      if(r===0&&c===0){
+        td.innerHTML='<span class="given">정삼각형</span>';cellEls[r][c]=null;
+      }else{
+        let el;
+        if(r===0){
+          el=document.createElement('select');
+          ['','정삼각형','정사각형','정오각형','정육각형'].forEach(o=>{const op=document.createElement('option');op.value=o;op.textContent=o||'선택';el.appendChild(op);});
+        }else{
+          el=document.createElement('input');el.type='number';el.min='0';el.max='99';el.inputMode='numeric';
+        }
+        el.addEventListener('input',()=>{td.classList.remove('ok','bad');saveTable();});
+        td.appendChild(el);cellEls[r][c]=el;
+      }
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+  const old=t.querySelector('tbody');if(old)t.removeChild(old);
+  t.appendChild(tb);
+  try{
+    const o=JSON.parse(localStorage.getItem('polyTable')||'null');
+    if(o)o.forEach((r,ri)=>r.forEach((v,ci)=>{if(cellEls[ri]&&cellEls[ri][ci])cellEls[ri][ci].value=v;}));
+  }catch(e){}
+}
+function markColumn(){
+  document.querySelectorAll('#qtable [data-c]').forEach(el=>{el.classList.toggle('colSel',Number(el.dataset.c)===st.sol);});
+}
+function checkTable(){
+  let ok=0,tot=0,empty=0;
+  ROWS.forEach((row,r)=>DEFS.forEach((d,c)=>{
+    const el=cellEls[r][c];if(!el)return;
+    tot++;
+    const td=el.parentNode;td.classList.remove('ok','bad');
+    const v=String(el.value).trim();
+    if(v===''){empty++;return;}
+    const good=String(ANS[c][row.k])===v;
+    td.classList.add(good?'ok':'bad');
+    if(good)ok++;
+  }));
+  const m=$('tmsg');
+  if(ok===tot){m.style.color='#1d6b47';m.textContent='모두 맞았어요! 정말 잘했어요.';}
+  else{m.style.color='#5d5580';m.textContent=tot+'칸 중 '+ok+'칸이 맞았어요.'+(empty?' (비어 있는 칸 '+empty+'개)':'')+' 빨간 칸은 다시 세어 보세요!';}
+}
+buildTable();
+$('checkBtn').addEventListener('click',checkTable);
+$('clearBtn').addEventListener('click',()=>{
+  cellEls.forEach(r=>r.forEach(el=>{if(el){el.value='';el.parentNode.classList.remove('ok','bad');}}));
+  $('tmsg').textContent='';saveTable();
+});
+$('teachBtn').addEventListener('click',()=>{
+  ROWS.forEach((row,r)=>DEFS.forEach((d,c)=>{const el=cellEls[r][c];if(el)el.value=ANS[c][row.k];}));
+  saveTable();checkTable();
+});
+
+/* ================= TAB 2 ================= */
+const SH=[{k:3,name:'정삼각형',hue:345},{k:4,name:'정사각형',hue:150},{k:5,name:'정오각형',hue:205},{k:6,name:'정육각형',hue:268}];
+const SH_COEF={};
+SH.forEach(s=>{
+  const k=s.k,eps=TAU/k,P=[[0,0]];
+  for(let j=1;j<k;j++){const pr=P[j-1],ang=(j-1)*eps;P.push([pr[0]+Math.cos(ang),pr[1]+Math.sin(ang)]);}
+  const a=Math.PI-eps;
+  const co=P.map(p=>{const be=p[1]/Math.sin(a);return [p[0]-be*Math.cos(a),be];});
+  SH_COEF[k]={a:a,co:co};
+});
+const SOLID_OF={'3-3':'정사면체','3-4':'정팔면체','3-5':'정이십면체','4-3':'정육면체','5-3':'정십이면체'};
+function vertexGeom(k,n,T){
+  const C=SH_COEF[k],a=C.a,full=TAU/n;
+  const canFold=a*n<TAU-1e-9;
+  const dphi=canFold?a+T*(full-a):a;
+  let ct=0;
+  if(canFold){const c=(Math.cos(a)-Math.cos(dphi))/(1-Math.cos(dphi));ct=Math.sqrt(Math.max(0,c));}
+  const sn=Math.sqrt(Math.max(0,1-ct*ct));
+  const edge=i=>{const ph=i*dphi;return [sn*Math.cos(ph),sn*Math.sin(ph),-ct];};
+  const faces=[];
+  for(let i=0;i<n;i++){
+    const e1=edge(i),e2=edge(i+1);
+    faces.push(C.co.map(c=>[c[0]*e1[0]+c[1]*e2[0],c[0]*e1[1]+c[1]*e2[1],c[0]*e1[2]+c[1]*e2[2]]));
+  }
+  return {faces:faces,a:a,dphi:dphi,canFold:canFold};
+}
+const ui2={canvas:$('c2'),ctx:$('c2').getContext('2d'),W:0,H:0,dpr:0};
+const ui3={canvas:$('c3'),ctx:$('c3').getContext('2d'),W:0,H:0,dpr:0};
+const view2=makeView();attachDrag(ui2.canvas,view2);
+const QF2=Q.norm(Q.mul(Q.axis([0,1,0],0.35),Q.axis([1,0,0],-0.8)));
+const st2={k:6,n:3,T:0,anim:null,shakeUntil:0};
+const degOf=k=>Math.round(SH_COEF[k].a*180/Math.PI);
+function shapeHue(k){return SH.filter(s=>s.k===k)[0].hue;}
+
+function sel2(k,n){
+  st2.k=k;st2.n=Math.max(3,Math.min(6,n));st2.T=0;st2.anim=null;st2.shakeUntil=0;
+  viewTo(view2,Q.ident(),450);
+  refresh2();
+}
+function refresh2(){
+  [].forEach.call($('shapeBar').children,(b,i)=>b.classList.toggle('on',SH[i].k===st2.k));
+  $('nVal').textContent=st2.n+'개';
+  const k=st2.k,n=st2.n,deg=degOf(k),sum=deg*n,name=SH.filter(s=>s.k===k)[0].name;
+  const v=$('verdict2');
+  $('eq2').textContent=name+'의 한 각 '+deg+'° × '+n+' = '+sum+'°';
+  if(sum<360){
+    const sol=SOLID_OF[k+'-'+n];
+    v.className='verdict ok';
+    v.textContent='합이 360°보다 작아요 ('+(360-sum)+'° 모자람). 접으면 빈틈이 딱 닫히면서 꼭짓점이 솟아올라요. 이 꼭짓점으로 '+sol+'를 만들 수 있어요!';
+    $('foldBtn2').textContent='접어 보기';
+    $('hint2').textContent='[접어 보기]를 눌러 보세요. 드래그하면 돌려 볼 수 있어요.';
+  }else if(sum===360){
+    v.className='verdict warn';
+    v.textContent='합이 정확히 360°예요. 빈틈이 하나도 없어서 평평한 판이 되어 버려요. 접어 올릴 수 없으니 입체도형이 될 수 없어요.';
+    $('foldBtn2').textContent='접어 보기 (될까요?)';
+    $('hint2').textContent='접어 보려고 해도 움직일 곳이 없어요.';
+  }else{
+    v.className='verdict bad';
+    v.textContent='합이 360°보다 커요 ('+(sum-360)+'° 넘침). 면이 서로 겹쳐서 한 꼭짓점에 모을 수 없어요. 입체도형이 될 수 없어요.';
+    $('foldBtn2').textContent='접어 보기 (될까요?)';
+    $('hint2').textContent='빨간 점선 면이 다른 면과 겹쳐요.';
+  }
+  document.querySelectorAll('#matrix td').forEach(td=>{
+    td.classList.toggle('sel',Number(td.dataset.k)===k&&Number(td.dataset.n)===n);
+  });
+}
+function draw2(now){
+  if(!ensureSize(ui2))return;
+  const ctx=ui2.ctx,W=ui2.W,H=ui2.H;
+  ctx.clearRect(0,0,W,H);
+  const k=st2.k,n=st2.n,g=vertexGeom(k,n,st2.T);
+  let pv=[0,0,0],c=0;
+  g.faces.forEach(f=>f.forEach(p=>{pv=V3.add(pv,p);c++;}));pv=V3.mul(pv,1/c);
+  const R=2.6,q=view2.q,D=6*R,sc=0.40*Math.min(W,H)/R,cx=W/2,cy=H/2;
+  const pj=p=>{const v=Q.rot(q,V3.sub(p,pv));const f=D/(D-v[2]);return {x:cx+sc*v[0]*f,y:cy-sc*v[1]*f,z:v[2],v:v};};
+  const flat=st2.T<0.02;
+  const a=g.a,sum=a*n;
+  const hb=shapeHue(k);
+  const sh=now<st2.shakeUntil?Math.sin(now/32)*6*((st2.shakeUntil-now)/1000):0;
+  ctx.lineJoin='round';
+  /* gap wedge */
+  if(flat&&g.canFold){
+    const pts=[pj([0,0,0])],a0=sum,a1=TAU,steps=24;
+    for(let i=0;i<=steps;i++){const ph=a0+(a1-a0)*i/steps;pts.push(pj([1.25*Math.cos(ph),1.25*Math.sin(ph),0]));}
+    polyPath(ctx,pts);ctx.fillStyle='rgba(255,255,255,0.9)';ctx.fill();
+    ctx.setLineDash([7,5]);ctx.lineWidth=2;ctx.strokeStyle='#a99bc9';ctx.stroke();ctx.setLineDash([]);
+    const mid=(a0+a1)/2,lp=pj([0.8*Math.cos(mid),0.8*Math.sin(mid),0]);
+    ctx.fillStyle='#8a7cb0';ctx.font='800 15px '+FONT;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('빈틈 '+Math.round((TAU-sum)*180/Math.PI)+'°',lp.x,lp.y);
+  }
+  const L=V3.norm([0.35,0.5,0.8]);
+  const polys=g.faces.map((arr,i)=>{
+    const pts=arr.map(pj);
+    const nn=V3.norm(V3.cross(V3.sub(pts[1].v,pts[0].v),V3.sub(pts[2].v,pts[0].v)));
+    let z=0;pts.forEach(p=>{z+=p.z;});
+    return {i:i,pts:pts,n:nn,front:nn[2]>0,z:z/pts.length};
+  }).sort((x,y)=>x.z-y.z);
+  const overlapMode=!g.canFold&&sum>TAU+1e-6;
+  polys.forEach(pl=>{
+    const lam=Math.abs(V3.dot(pl.n,L)),h=(hb+pl.i*9)%360;
+    const fill=pl.front?'hsl('+h+',66%,'+(78+10*lam)+'%)':'hsl('+h+',28%,91%)';
+    const dx=(pl.i%2?sh:-sh);
+    polyPath(ctx,pl.pts,dx);
+    ctx.globalAlpha=(flat&&overlapMode)?0.68:(flat&&!g.canFold?0.92:1);
+    ctx.fillStyle=fill;ctx.fill();ctx.globalAlpha=1;
+    ctx.lineWidth=2;ctx.strokeStyle='rgba(80,70,120,0.8)';ctx.stroke();
+    if(overlapMode&&flat&&(pl.i+1)*a>TAU+1e-6){
+      ctx.setLineDash([8,5]);ctx.lineWidth=3.5;ctx.strokeStyle='#e0456f';ctx.stroke();ctx.setLineDash([]);
+    }
+  });
+  /* angle marks (flat state) */
+  if(flat){
+    const A0=pj([0,0,0]);
+    ctx.font='800 14px '+FONT;ctx.textAlign='center';ctx.textBaseline='middle';
+    for(let i=0;i<n;i++){
+      const p0=i*a,p1=(i+1)*a,pts=[];
+      for(let s=0;s<=10;s++){const ph=p0+(p1-p0)*s/10;pts.push(pj([0.3*Math.cos(ph),0.3*Math.sin(ph),0]));}
+      ctx.beginPath();pts.forEach((p,j)=>{if(j)ctx.lineTo(p.x,p.y);else ctx.moveTo(p.x,p.y);});
+      ctx.lineWidth=2.5;ctx.strokeStyle='#5d4a9c';ctx.stroke();
+      const mid=(p0+p1)/2,lp=pj([0.62*Math.cos(mid),0.62*Math.sin(mid),0]);
+      ctx.fillStyle='#3a2f66';
+      if(lp.x>0)ctx.fillText(degOf(k)+'°',lp.x,lp.y);
+    }
+    if(overlapMode){
+      const mid=(TAU+sum)/2,lp=pj([1.0*Math.cos(mid),1.0*Math.sin(mid),0]);
+      ctx.fillStyle='#d12f5c';ctx.font='800 15px '+FONT;
+      ctx.fillText('겹쳐요!',lp.x,lp.y);
+    }
+    if(!g.canFold&&!overlapMode){
+      ctx.fillStyle='#8a5a12';ctx.font='800 15px '+FONT;ctx.textAlign='center';
+      ctx.fillText('빈틈이 없어요 (360°)',W/2,H-18);
+    }
+    ctx.beginPath();ctx.arc(A0.x,A0.y,5,0,TAU);ctx.fillStyle='#ff5c85';ctx.fill();
+  }else{
+    const A0=pj([0,0,0]);
+    ctx.beginPath();ctx.arc(A0.x,A0.y,6,0,TAU);ctx.fillStyle='#ff5c85';ctx.fill();
+    ctx.lineWidth=2;ctx.strokeStyle='#fff';ctx.stroke();
+  }
+}
+function drawDonut(){
+  if(!ensureSize(ui3))return;
+  const ctx=ui3.ctx,W=ui3.W,H=ui3.H;
+  ctx.clearRect(0,0,W,H);
+  const k=st2.k,n=st2.n,deg=degOf(k),hb=shapeHue(k);
+  const cx=W/2,cy=H/2,Ro=Math.min(W,H)*0.36,Ri=Ro*0.58;
+  const start=-Math.PI/2;
+  const sum=deg*n;
+  ctx.lineJoin='round';
+  /* base ring */
+  ctx.beginPath();ctx.arc(cx,cy,Ro,0,TAU);ctx.arc(cx,cy,Ri,TAU,0,true);ctx.closePath();
+  ctx.fillStyle='#faf7ff';ctx.fill();
+  for(let i=0;i<n;i++){
+    const a0=start+i*deg*Math.PI/180,a1=a0+deg*Math.PI/180;
+    const lim=start+TAU;
+    const e0=Math.min(a0,lim),e1=Math.min(a1,lim);
+    if(e1>e0+1e-9){
+      ctx.beginPath();ctx.arc(cx,cy,Ro,e0,e1);ctx.arc(cx,cy,Ri,e1,e0,true);ctx.closePath();
+      ctx.fillStyle='hsl('+((hb+i*9)%360)+',66%,82%)';ctx.fill();
+      ctx.lineWidth=2;ctx.strokeStyle='#fff';ctx.stroke();
+    }
+    const mid=(Math.min(a0,lim)+Math.min(a1,lim))/2;
+    if(e1>e0+0.3){
+      ctx.fillStyle='#3a2f66';ctx.font='800 14px '+FONT;ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(deg+'°',cx+(Ro+Ri)/2*Math.cos(mid),cy+(Ro+Ri)/2*Math.sin(mid));
+    }
+  }
+  if(sum<360){
+    const a0=start+sum*Math.PI/180,a1=start+TAU;
+    ctx.beginPath();ctx.arc(cx,cy,Ro,a0,a1);ctx.arc(cx,cy,Ri,a1,a0,true);ctx.closePath();
+    ctx.setLineDash([6,4]);ctx.lineWidth=2;ctx.strokeStyle='#a99bc9';ctx.stroke();ctx.setLineDash([]);
+    const mid=(a0+a1)/2;
+    ctx.fillStyle='#8a7cb0';ctx.font='800 14px '+FONT;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('빈틈',cx+(Ro+Ri)/2*Math.cos(mid),cy+(Ro+Ri)/2*Math.sin(mid));
+  }
+  if(sum>360){
+    const a0=start,a1=start+(sum-360)*Math.PI/180;
+    ctx.beginPath();ctx.arc(cx,cy,Ro+14,a0,a1);
+    ctx.lineWidth=9;ctx.strokeStyle='#ee7a9b';ctx.lineCap='butt';ctx.stroke();
+  }
+  ctx.fillStyle='#3a3452';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.font='700 15px '+FONT;ctx.fillText('각의 합',cx,cy-20);
+  ctx.font='900 30px '+FONT;
+  ctx.fillStyle=sum<360?'#2f8a5e':(sum===360?'#b27a10':'#d12f5c');
+  ctx.fillText(sum+'°',cx,cy+10);
+  ctx.font='700 13px '+FONT;ctx.fillStyle='#6c6590';
+  ctx.fillText(sum<360?'360°보다 작다':(sum===360?'360°와 같다':'360°보다 크다'),cx,cy+36);
+}
+function step2(now){
+  stepView(view2,now);
+  if(st2.anim){
+    const a=st2.anim,u=Math.min(1,(now-a.t0)/a.dur);
+    st2.T=a.from+(a.to-a.from)*u;
+    if(u>=1){st2.T=a.to;st2.anim=null;
+      if(st2.T>=0.999){$('hint2').textContent='빈틈이 딱 맞게 닫혀서 꼭짓점이 완성됐어요! 드래그해서 돌려 보세요.';
+        $('foldBtn2').textContent='다시 펼치기';}
+      else {refresh2();}
+    }
+  }
+}
+(function(){
+  const bar=$('shapeBar');
+  SH.forEach(s=>{
+    const b=document.createElement('button');
+    b.textContent=s.name+' ('+degOf(s.k)+'°)';
+    b.style.background='hsl('+s.hue+',70%,88%)';
+    b.addEventListener('click',()=>sel2(s.k,st2.n));
+    bar.appendChild(b);
+  });
+  $('nMinus').addEventListener('click',()=>sel2(st2.k,st2.n-1));
+  $('nPlus').addEventListener('click',()=>sel2(st2.k,st2.n+1));
+  $('foldBtn2').addEventListener('click',()=>{
+    const g=vertexGeom(st2.k,st2.n,0);
+    if(!g.canFold){
+      st2.shakeUntil=performance.now()+1000;
+      $('hint2').textContent='움직이지 않아요! 각의 합이 360° 이상이면 접어 올릴 수 없어요.';
+      return;
+    }
+    const tgt=(st2.anim?st2.anim.to===1:st2.T>0.5)?0:1;
+    const now=performance.now(),dur=3200*Math.max(0.2,Math.abs(tgt-st2.T));
+    st2.anim={from:st2.T,to:tgt,t0:now,dur:dur};
+    viewTo(view2,tgt?QF2:Q.ident(),dur*0.9);
+    $('foldBtn2').textContent=tgt?'다시 펼치기':'접어 보기';
+    $('hint2').textContent=tgt?'빈틈이 점점 줄어들어요...':'';
+  });
+  /* matrix */
+  const m=$('matrix');
+  let h='<thead><tr><th>정다각형 \\ 모이는 면</th>';
+  for(let n=3;n<=6;n++)h+='<th>'+n+'개</th>';
+  h+='</tr></thead><tbody>';
+  SH.forEach(s=>{
+    h+='<tr><th>'+s.name+'<br><small>한 각 '+degOf(s.k)+'°</small></th>';
+    for(let n=3;n<=6;n++){
+      const sum=degOf(s.k)*n;
+      let cls,txt;
+      if(sum<360){cls='p';txt='<small>'+SOLID_OF[s.k+'-'+n]+'</small>';}
+      else if(sum===360){cls='z';txt='<small>평면이 돼요</small>';}
+      else{cls='x';txt='<small>겹쳐요</small>';}
+      h+='<td class="'+cls+'" data-k="'+s.k+'" data-n="'+n+'">'+degOf(s.k)+'°×'+n+'='+sum+'°'+txt+'</td>';
+    }
+    h+='</tr>';
+  });
+  h+='</tbody>';
+  m.innerHTML=h;
+  m.addEventListener('click',e=>{
+    const td=e.target.closest('td');if(!td)return;
+    sel2(Number(td.dataset.k),Number(td.dataset.n));
+  });
+})();
+
+/* ================= tabs & loop ================= */
+let activeTab=1;
+function showTab(t){
+  activeTab=t;
+  $('tab1').classList.toggle('hide',t!==1);
+  $('tab2').classList.toggle('hide',t!==2);
+  $('tabBtn1').classList.toggle('on',t===1);
+  $('tabBtn2').classList.toggle('on',t===2);
+}
+$('tabBtn1').addEventListener('click',()=>showTab(1));
+$('tabBtn2').addEventListener('click',()=>showTab(2));
+
+function frame(now){
+  requestAnimationFrame(frame);
+  try{
+    if(activeTab===1){step1(now);draw1();}
+    else{step2(now);draw2(now);drawDonut();}
+  }catch(err){
+    if(!window.__errShown){window.__errShown=true;console.error(err);}
+  }
+}
+selectSolid(0);
+sel2(6,3);
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
